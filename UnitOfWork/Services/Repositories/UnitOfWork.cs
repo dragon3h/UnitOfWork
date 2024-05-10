@@ -6,11 +6,11 @@ namespace UnitOfWork.Services.Repositories;
 public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly DataContext _context;
-    private readonly ILogger _logger;
+    private readonly ILogger<UnitOfWork> _logger;
     
     public IPlayerRepository Players { get; private set; }
     
-    public UnitOfWork(DataContext context, ILogger logger)
+    public UnitOfWork(DataContext context, ILogger<UnitOfWork> logger)
     {
         _context = context;
         _logger = logger;

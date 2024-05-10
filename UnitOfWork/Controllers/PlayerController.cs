@@ -53,13 +53,13 @@ public class PlayerController : ControllerBase
             }
 
             await _unitOfWork.CompleteAsync();
-            return CreatedAtAction("GetPlayer", new { id = player.Id }, player);
+            return CreatedAtAction("GetById", new { id = player.Id }, player);
         }
         
         return new JsonResult("Something went wrong"){StatusCode = 500};
     }
     
-    [HttpGet("{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, Player player)
     {
         if (id != player.Id)
