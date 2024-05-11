@@ -49,9 +49,19 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
     }
 
-    public Task<T> Update(T entity)
+    public virtual async Task<T> Update(T entity)
     {
-        throw new NotImplementedException();
+        var player = dbSet.FirstOrDefault(entity);
+        if (player != null)
+        {
+            dbSet.Update(entity);
+            return entity;
+        }
+        else
+        {
+            _logger.LogError("Entity not found");
+            return null;
+        }
     }
 
     public virtual async Task<bool> Delete(int id)

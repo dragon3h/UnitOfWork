@@ -72,7 +72,7 @@ public class PlayerController : ControllerBase
         {
             return BadRequest();
         }
-
+        
         await _unitOfWork.CompleteAsync();
         return NoContent();
     }

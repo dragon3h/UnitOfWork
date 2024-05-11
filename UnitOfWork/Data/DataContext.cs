@@ -15,6 +15,15 @@ public class DataContext : DbContext
     // Here the DbSet is of type Player and the name of the table in the database will be Players
     public DbSet<Player> Players { get; set; }
     
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Player>(entity =>
+        {
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+        });
+    }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
