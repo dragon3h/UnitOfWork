@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UnitOfWork.Data;
+using UnitOfWork.Models;
 using UnitOfWork.Services.IRepositories;
 
 namespace UnitOfWork.Services.Repositories;
 
-public class GenericRepository<T> : IGenericRepository<T> where T : class
+public class GenericRepository<T> : IGenericRepository<T> where T : class, IEntity
 {
     protected DataContext _context;
-    protected DbSet<T> dbSet;
-    protected readonly ILogger _logger;
+    private DbSet<T?> dbSet;
+    private readonly ILogger _logger;
     
     public GenericRepository(DataContext context, ILogger logger)
     {
@@ -17,16 +18,16 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _logger = logger;
     }
     
-    public virtual async Task<IEnumerable<T>> GetAll()
+    public virtual async Task<IEnumerable<T?>> GetAll()
     {
         return await dbSet.ToListAsync();
     }
 
-    public virtual async Task<T> GetById(int id)
+    public virtual async Task<T?> GetById(int id)
     {
         try
         {
-            return await dbSet.FindAsync(id);
+            return await dbSet.FirstOrDefaultAsync(e => e.Id == id);
         }
         catch (Exception e)
         {
@@ -35,23 +36,23 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
     }
 
-    public virtual async Task<bool> Add(T entity)
+    public virtual async Task<T?> Add(T? entity)
     {
         try
         {
             await dbSet.AddAsync(entity);
-            return true;
+            return entity;
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Error in Add method with entity: {entity}", entity);
-            return false;
+            return null;
         }
     }
 
-    public virtual async Task<T> Update(T entity)
+    public virtual async Task<T?> Update(T? entity)
     {
-        var player = dbSet.FirstOrDefault(entity);
+        var player = await dbSet.FirstOrDefaultAsync(e => e!.Id == entity!.Id);
         if (player != null)
         {
             dbSet.Update(entity);
@@ -68,7 +69,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         try
         {
-            var entity = dbSet.Find(id);
+            var entity = await dbSet.FindAsync(id);
             if (entity != null)
             {
                 dbSet.Remove(entity);

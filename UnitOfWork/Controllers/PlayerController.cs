@@ -42,12 +42,12 @@ public class PlayerController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> Add(Player player)
+    public async Task<IActionResult> Add(Player? player)
     {
         if (ModelState.IsValid)
         {
             var result = await _unitOfWork.Players.Add(player);
-            if (!result)
+            if (result == null)
             {
                 return BadRequest();
             }
@@ -60,7 +60,7 @@ public class PlayerController : ControllerBase
     }
     
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, Player player)
+    public async Task<IActionResult> Update(int id, Player? player)
     {
         if (id != player.Id)
         {
