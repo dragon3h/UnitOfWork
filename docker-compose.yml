@@ -4,3 +4,9 @@
     build:
       context: .
       dockerfile: UnitOfWork/Dockerfile
+
+  ui:
+    image: ui
+    build:
+      context: .
+      dockerfile: UI/Dockerfile

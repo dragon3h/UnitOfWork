@@ -1,12 +1,13 @@
-﻿using UnitOfWork.Data;
-using UnitOfWork.Models;
-using UnitOfWork.Services.IRepositories;
+﻿using Application.Interfaces.IRepositories;
+using Domain.Models;
+using Infrastructure.Data;
+using Microsoft.Extensions.Logging;
 
-namespace UnitOfWork.Services.Repositories;
+namespace Infrastructure.Services.Repositories;
 
 public class PlayerRepository : GenericRepository<Player>, IPlayerRepository
 {
-    public PlayerRepository(DataContext context, ILogger logger) : base(context, logger)
+    public PlayerRepository(DataContext context, ILogger<PlayerRepository> logger) : base(context, logger)
     {
     }
     

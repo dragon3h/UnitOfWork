@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using UnitOfWork.Data;
-using UnitOfWork.Models;
-using UnitOfWork.Services.IRepositories;
+﻿using Application.Interfaces.IRepositories;
+using Domain.Models;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace UnitOfWork.Services.Repositories;
+namespace Infrastructure.Services.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class, IEntity
 {

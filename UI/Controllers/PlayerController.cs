@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UnitOfWork.Models;
-using UnitOfWork.Services.IRepositories;
+﻿using Application.Interfaces.IRepositories;
+using Domain.Models;
+using Infrastructure.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
-namespace UnitOfWork.Controllers;
+namespace UI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -30,7 +31,7 @@ public class PlayerController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id) 
+    public async Task<IActionResult> GetById(int id)
     {
         var player = await _unitOfWork.Players.GetById(id);
         if (player == null)
@@ -40,25 +41,21 @@ public class PlayerController : ControllerBase
 
         return Ok(player);
     }
-    
-    [HttpPost]
-    public async Task<IActionResult> Add(Player? player)
-    {
-        if (ModelState.IsValid)
-        {
-            var result = await _unitOfWork.Players.Add(player);
-            if (result == null)
-            {
-                return BadRequest();
-            }
 
-            await _unitOfWork.CompleteAsync();
-            return CreatedAtAction("GetById", new { id = player.Id }, player);
-        }
-        
-        return new JsonResult("Something went wrong"){StatusCode = 500};
+    [HttpPost]
+    public async Task<IActionResult> Add(PlayerRequest playerRequest)
+    {
+        var player = new Player
+        {
+            Name = playerRequest.Name,
+            Password = playerRequest.Password,
+            Email = playerRequest.Email
+        };
+        await _unitOfWork.Players.Add(player);
+        await _unitOfWork.CompleteAsync();
+        return CreatedAtAction("GetById", new { id = player!.Id }, player);
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, Player? player)
     {
@@ -72,11 +69,11 @@ public class PlayerController : ControllerBase
         {
             return BadRequest();
         }
-        
+
         await _unitOfWork.CompleteAsync();
         return NoContent();
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

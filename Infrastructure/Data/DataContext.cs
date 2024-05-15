@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using UnitOfWork.Models;
+﻿using Domain.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
-namespace UnitOfWork.Data;
+namespace Infrastructure.Data;
 
 public class DataContext : DbContext
 {

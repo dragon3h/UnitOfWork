@@ -1,6 +1,6 @@
-﻿using UnitOfWork.Models;
+﻿using Domain.Models;
 
-namespace UnitOfWork.Services.IRepositories;
+namespace Application.Interfaces.IRepositories;
 
 public interface IPlayerRepository : IGenericRepository<Player>
 {

@@ -1,4 +1,4 @@
-﻿namespace UnitOfWork.Models;
+﻿namespace Domain.Models;
 
 public class Player : BaseEntity
 {
