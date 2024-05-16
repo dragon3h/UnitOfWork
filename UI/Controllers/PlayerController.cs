@@ -2,6 +2,7 @@
 using Domain.Models;
 using Infrastructure.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using UI.Utils;
 
 namespace UI.Controllers;
 
@@ -11,6 +12,7 @@ public class PlayerController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<PlayerController> _logger;
+    private readonly Mapper Mapper = new();
 
     public PlayerController(ILogger<PlayerController> logger, IUnitOfWork unitOfWork)
     {
@@ -26,8 +28,11 @@ public class PlayerController : ControllerBase
         {
             return NotFound();
         }
+        
+        var playersList = players.ToList();
+        var playersListRequest = Mapper.MapPlayersToPlayerRequests(playersList);
 
-        return Ok(players);
+        return Ok(playersListRequest);
     }
 
     [HttpGet("{id}")]
@@ -39,18 +44,16 @@ public class PlayerController : ControllerBase
             return NotFound();
         }
 
-        return Ok(player);
+        var playerRequest = Mapper.MapPlayerToPlayerRequest(player);
+
+        return Ok(playerRequest);
     }
 
     [HttpPost]
     public async Task<IActionResult> Add(PlayerRequest playerRequest)
     {
-        var player = new Player
-        {
-            Name = playerRequest.Name,
-            Password = playerRequest.Password,
-            Email = playerRequest.Email
-        };
+        var player = Mapper.MapPlayerRequestToPlayer(playerRequest);
+        
         await _unitOfWork.Players.Add(player);
         await _unitOfWork.CompleteAsync();
         return CreatedAtAction("GetById", new { id = player!.Id }, player);
