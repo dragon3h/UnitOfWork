@@ -2,7 +2,7 @@
 using Infrastructure.DTOs;
 
 
-public class PlayerValidation : AbstractValidator<PlayerRequest>
+public class PlayerValidation : AbstractValidator<PlayerDTO>
 {
     public PlayerValidation()
     {

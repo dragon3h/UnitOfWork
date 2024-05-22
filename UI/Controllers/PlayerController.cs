@@ -12,12 +12,13 @@ public class PlayerController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<PlayerController> _logger;
-    private readonly Mapper Mapper = new();
+    private readonly IMapper<Player, PlayerDTO> _mapper;
 
-    public PlayerController(ILogger<PlayerController> logger, IUnitOfWork unitOfWork)
+    public PlayerController(ILogger<PlayerController> logger, IUnitOfWork unitOfWork, IMapper<Player, PlayerDTO> mapper)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -28,9 +29,9 @@ public class PlayerController : ControllerBase
         {
             return NotFound();
         }
-        
+
         var playersList = players.ToList();
-        var playersListRequest = Mapper.MapPlayersToPlayerRequests(playersList);
+        var playersListRequest = _mapper.MapList(playersList);
 
         return Ok(playersListRequest);
     }
@@ -44,37 +45,43 @@ public class PlayerController : ControllerBase
             return NotFound();
         }
 
-        var playerRequest = Mapper.MapPlayerToPlayerRequest(player);
+        var playerRequest = _mapper.Map(player);
 
         return Ok(playerRequest);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(PlayerRequest playerRequest)
+    public async Task<IActionResult> Add(PlayerDTO playerDto)
     {
-        var player = Mapper.MapPlayerRequestToPlayer(playerRequest);
-        
+        var player = _mapper.MapForCreation(playerDto);
+
         await _unitOfWork.Players.Add(player);
         await _unitOfWork.CompleteAsync();
+
         return CreatedAtAction("GetById", new { id = player!.Id }, player);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, Player? player)
+    public async Task<IActionResult> Update(int id, PlayerDTO playerToUpdate)
     {
-        if (id != player.Id)
+        if (id == playerToUpdate.Id)
         {
-            return BadRequest();
+            var player = await _unitOfWork.Players.GetById(id);
+            if (player != null)
+            {
+                var mappedPlayer = _mapper.MapForUpdating(player, playerToUpdate);
+                var updatedPlayer = await _unitOfWork.Players.Update(mappedPlayer);
+                if (updatedPlayer == null)
+                {
+                    return BadRequest();
+                }
+            }
+
+            await _unitOfWork.CompleteAsync();
+            return NoContent();
         }
 
-        var updatedPlayer = await _unitOfWork.Players.Update(player);
-        if (updatedPlayer == null)
-        {
-            return BadRequest();
-        }
-
-        await _unitOfWork.CompleteAsync();
-        return NoContent();
+        return BadRequest();
     }
 
     [HttpDelete("{id}")]
