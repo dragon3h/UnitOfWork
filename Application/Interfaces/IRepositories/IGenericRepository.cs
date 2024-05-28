@@ -1,10 +1,12 @@
-﻿namespace Application.Interfaces.IRepositories;
+﻿using Domain.Models;
 
-public interface IGenericRepository<T> where T : class
+namespace Application.Interfaces.IRepositories;
+
+public interface IGenericRepository<T> where T : IEntity
 {
-    Task<IEnumerable<T?>> GetAll();
+    Task<IEnumerable<T>> GetAll();
     Task<T?> GetById(int id);
-    Task<T?> Add(T? entity);
-    Task<T?> Update(T? entity);
+    Task<T?> Add(T entity);
+    Task<T?> Update(T entity);
     Task<bool> Delete(int id);
 }
