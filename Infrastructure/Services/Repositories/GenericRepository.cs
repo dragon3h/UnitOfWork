@@ -33,7 +33,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class, IEnti
         catch (Exception e)
         {
             _logger.LogError(e, "Error in GetById method with id: {id}", id);
-            throw new Exception("Error in GetById, {e}", e);
+            throw;
         }
     }
 
@@ -47,7 +47,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class, IEnti
         catch (Exception e)
         {
             _logger.LogError(e, "Error in Add method with entity: {entity}", entity);
-            throw new Exception("Error in Add, {e}", e);
+            throw;
         }
     }
 
@@ -85,7 +85,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class, IEnti
         catch (Exception e)
         {
             _logger.LogError(e, "Error in Delete method with id: {id}", id);
-            throw new Exception("Error in Delete method, {e}", e);
+            throw;
         }
     }
 }

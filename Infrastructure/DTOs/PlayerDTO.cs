@@ -2,8 +2,8 @@
 
 public class PlayerDTO
 {
-    public int Id { get; set; } = 1;
-    public string Name { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
+    public int Id { get; set; } = default;
+    public string Name { get; set; } = default;
+    public string Password { get; set; } = default;
+    public string Email { get; set; } = default;
 }
