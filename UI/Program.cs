@@ -1,6 +1,15 @@
+using Application.Interfaces.IRepositories;
+using Domain.Models;
+using Infrastructure;
+using Infrastructure.DTOs;
+using UI.Utils;
+
 var builder = WebApplication.CreateBuilder(args);
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Add services to the container.
+builder.Services.AddScoped<IMapper<Player, PlayerDTO>, PlayerMapper>();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
