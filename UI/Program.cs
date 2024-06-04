@@ -1,7 +1,9 @@
 using Application.Interfaces.IRepositories;
 using Domain.Models;
 using Infrastructure;
+using Infrastructure.Data;
 using Infrastructure.DTOs;
+using Microsoft.EntityFrameworkCore;
 using UI.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Ensure the database is created and migrations are applied
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<DataContext>();
+    context.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

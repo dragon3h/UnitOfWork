@@ -14,7 +14,8 @@ public static class InfrastructureServiceExtentions
     {
         services.AddLogging();
         services.AddDbContext<DataContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
+                b => b.MigrationsAssembly("UI")));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
